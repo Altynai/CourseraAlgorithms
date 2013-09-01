@@ -3,16 +3,12 @@ public class Percolation {
 	private static int[] y = { 1, 0, -1, 0 };
 
 	private WeightedQuickUnionUF quickUnionData;
-	boolean isBlocked[][];
+	private boolean[][] isBlocked;
 	private int N;
-
-	private int getGradIndex(int i, int j) {
-		return (i - 1) * N + j;
-	}
 
 	public Percolation(int N) {
 		// create N-by-N grid, with all sites blocked
-		quickUnionData = new WeightedQuickUnionUF((N + 1) * (N + 1) + 2);
+		quickUnionData = new WeightedQuickUnionUF(N * N + 4);
 		isBlocked = new boolean[N + 1][N + 1];
 		for (int i = 0; i <= N; i++) {
 			for (int j = 0; j <= N; j++) {
@@ -22,9 +18,13 @@ public class Percolation {
 		this.N = N;
 	}
 
+	private int getGradIndex(int i, int j) {
+		return (i - 1) * N + j;
+	}
+
 	public void open(int i, int j) {
 		// open site (row i, column j) if it is not already
-		if (i <= 0 || i > N)
+		if (i <= 0 || i > N || j <= 0 || j > N)
 			throw new IndexOutOfBoundsException("row index i out of bounds");
 		if (isBlocked[i][j]) {
 			if (i == 1)
@@ -46,16 +46,18 @@ public class Percolation {
 
 	public boolean isOpen(int i, int j) {
 		// is site (row i, column j) open?
-		if (i <= 0 || i > N)
+		if (i <= 0 || i > N || j <= 0 || j > N)
 			throw new IndexOutOfBoundsException("row index i out of bounds");
 		return !isBlocked[i][j];
 	}
 
 	public boolean isFull(int i, int j) {
 		// is site (row i, column j) full?
-		if (i <= 0 || i > N)
+		if (i <= 0 || i > N || j <= 0 || j > N)
 			throw new IndexOutOfBoundsException("row index i out of bounds");
-		return isBlocked[i][j];
+		int virtualTopNode = 0;
+		return isOpen(i, j)
+				&& quickUnionData.connected(virtualTopNode, getGradIndex(i, j));
 	}
 
 	public boolean percolates() {

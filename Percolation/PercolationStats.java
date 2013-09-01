@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 public class PercolationStats {
 	private double threshold;
 	private double deviation;
@@ -10,25 +8,35 @@ public class PercolationStats {
 		// perform T independent computational experiments on an N-by-N grid
 		if (N <= 0 || T <= 0)
 			throw new java.lang.IllegalArgumentException("illegal argument.");
-		
+
 		double fraction[] = new double[T];
 		for (int test = 0; test < T; test++) {
 			Percolation percolation = new Percolation(N);
-			ArrayList<Point2D> blockedPoints = new ArrayList<Point2D>();
+			int[] inds = new int[N * N + 1];
 
-			for (int i = 1; i <= N; i++) {
-				for (int j = 1; j <= N; j++)
-					blockedPoints.add(new Point2D(i, j));
-			}
+			for (int i = 1; i <= N * N; i++)
+				inds[i] = i;
+
 			int openedCount = 0;
 			while (!percolation.percolates()) {
-				int blockedCount = blockedPoints.size();
-				int ind = StdRandom.uniform(0, blockedCount);
-				int x = (int) ((Point2D) blockedPoints.get(ind)).x();
-				int y = (int) ((Point2D) blockedPoints.get(ind)).y();
+				int blockedCount = N * N - openedCount;
+				int i = StdRandom.uniform(1, blockedCount + 1);
+				int x = 0, y = 0;
+				if (inds[i] % N == 0) {
+					x = inds[i] / N;
+					y = N;
+				} else {
+					x = inds[i] / N + 1;
+					y = inds[i] % N;
+				}
 				openedCount++;
 				percolation.open(x, y);
-				blockedPoints.remove(ind);
+
+				// swap inds[i], inds[blockedCount]
+				int t = inds[i];
+				inds[i] = inds[blockedCount];
+				inds[blockedCount] = t;
+
 			}
 			fraction[test] = (double) openedCount / (N * N);
 		}
