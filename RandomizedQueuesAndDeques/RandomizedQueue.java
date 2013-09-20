@@ -33,6 +33,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	}
 
 	public Item dequeue() { // delete and return a random item
+		if (size == 0)
+			throw new NoSuchElementException();
+		
 		int index = StdRandom.uniform(0, size);
 		Item result = items[index];
 		if (size - 1 < items.length / 4) {
