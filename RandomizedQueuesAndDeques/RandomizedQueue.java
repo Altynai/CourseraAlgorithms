@@ -25,6 +25,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 		
 		if (size == items.length) {
 			Item[] newItems = (Item[]) new Object[size * 2];
+			for (int i = 0; i < newItems.length; i++)
+				newItems[i] = null;
 			for (int i = 0; i < size; i++)
 				newItems[i] = items[i];
 			items = newItems;
@@ -35,11 +37,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	public Item dequeue() { // delete and return a random item
 		if (size == 0)
 			throw new NoSuchElementException();
-		
+
 		int index = StdRandom.uniform(0, size);
 		Item result = items[index];
 		if (size - 1 < items.length / 4) {
 			Item[] newItems = (Item[]) new Object[items.length / 2];
+			for (int i = 0; i < newItems.length; i++)
+				newItems[i] = null;
 			for (int i = 0, j = 0; i < size; i++) {
 				if (i != index)
 					newItems[j++] = items[i];
