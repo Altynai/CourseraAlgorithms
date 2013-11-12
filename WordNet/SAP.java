@@ -21,17 +21,22 @@ public class SAP {
 		int[] d = new int[graph.V()];
 		for (int i = 0; i < graph.V(); i++)
 			d[i] = Integer.MAX_VALUE;
+		boolean[] inQueue = new boolean[graph.V()];
 		Queue<Integer> queue = new Queue<Integer>();
 		for (int u : w) {
 			d[u] = 0;
 			queue.enqueue(u);
+			inQueue[u] = true;
 		}
 		while (!queue.isEmpty()) {
 			int u = queue.dequeue();
 			for (int v : graph.adj(u)) {
 				if (d[v] > d[u] + 1) {
 					d[v] = d[u] + 1;
-					queue.enqueue(v);
+					if (!inQueue[v]) {
+						queue.enqueue(v);
+						inQueue[v] = true;
+					}
 				}
 			}
 		}
