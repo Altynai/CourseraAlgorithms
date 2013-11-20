@@ -91,28 +91,52 @@ public class SeamCarver {
 		Stack<DirectedEdge> path = (Stack<DirectedEdge>) spt.pathTo(end);
 
 		int[] x = new int[this.h];
-		double sum = 0;
 		DirectedEdge edge = path.pop();
-		sum += edge.weight();
 		int index = 0;
 		while (index < this.h && !path.isEmpty()) {
 			edge = path.pop();
-			sum += edge.weight();
 			x[index] = back2X(edge.from());
 			index++;
 		}
-		StdOut.printf("sum:%.0f\n", sum);
 		return x;
 	}
 
 	public void removeHorizontalSeam(int[] a) { // remove horizontal seam from
 												// current picture
 		checkArray(a, this.w);
+		Picture newPicture = new Picture(w, h - 1);
+		for (int x = 0; x < w; x++) {
+			for (int y = 0; y < h; y++) {
+				if (y == a[x])
+					continue;
+				else if (y < a[x])
+					newPicture.set(x, y, picture.get(x, y));
+				else
+					newPicture.set(x, y - 1, picture.get(x, y));
+			}
+		}
+		this.picture = newPicture;
+		this.w = newPicture.width();
+		this.h = newPicture.height();
 	}
 
 	public void removeVerticalSeam(int[] a) { // remove vertical seam from
 												// current picture
 		checkArray(a, this.h);
+		Picture newPicture = new Picture(w - 1, h);
+		for (int y = 0; y < h; y++) {
+			for (int x = 0; x < w; x++) {
+				if (x == a[y])
+					continue;
+				else if (x < a[y])
+					newPicture.set(x, y, picture.get(x, y));
+				else
+					newPicture.set(x - 1, y, picture.get(x, y));
+			}
+		}
+		this.picture = newPicture;
+		this.w = newPicture.width();
+		this.h = newPicture.height();
 	}
 
 	private boolean checkBounds(int x, int y) {
@@ -215,17 +239,19 @@ public class SeamCarver {
 			if (Math.abs(a[i] - a[i - 1]) > 1)
 				throw new IllegalArgumentException();
 		}
+		for (int i = 0; i < length; i++) {
+			if (length == this.w && (a[i] < 0 || a[i] >= this.h))
+				throw new IllegalArgumentException();
+			if (length == this.h && (a[i] < 0 || a[i] >= this.w))
+				throw new IllegalArgumentException();
+		}
 	}
 
 	public static void main(String[] args) {
 		String file = "6x5.png";
 		SeamCarver seam = new SeamCarver(new Picture(file));
-		seam.findVerticalSeam();
-		// for (int w : seam.findVerticalSeam())
-		// StdOut.print(w + " ");
-		// for (int i = 0; i < 30; i++) {
-		// StdOut.print(i + "= " + seam.back2X(i) + ":" + seam.back2Y(i)
-		// + "\n");
-		// }
+		int[] a = seam.findVerticalSeam();
+		seam.removeVerticalSeam(a);
+		seam.energy(5, 3);
 	}
 }
