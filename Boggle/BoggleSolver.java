@@ -88,11 +88,9 @@ public class BoggleSolver {
 			int i, int j, String current_word) {
 
 		/*
-		 * Optimization One:
-		 * If current_word.length() > max_link_length,
-		 * it means that any word longer than current_word will
-		 * never appears in the dictionary. So there's no
-		 * need to continue searching.
+		 * Optimization One: If current_word.length() > max_link_length, it
+		 * means that any word longer than current_word will never appears in
+		 * the dictionary. So there's no need to continue searching.
 		 */
 		if (current_word.length() > max_link_length)
 			return;
@@ -102,10 +100,8 @@ public class BoggleSolver {
 		if (deepest_node.val > 0)
 			result_set.add(formatQ2Qu(current_word));
 		/*
-		 * Optimization Two:
-		 * If deepest_node.has_subtree is false,
-		 * it means that any word with this prefix
-		 * never appears in the dictionary, and also,
+		 * Optimization Two: If deepest_node.has_subtree is false, it means that
+		 * any word with this prefix never appears in the dictionary, and also,
 		 * there's no need to continue searching.
 		 */
 		if (!deepest_node.has_subtree)
@@ -135,7 +131,8 @@ public class BoggleSolver {
 	public int scoreOf(String word) {
 		word = formatQu2Q(word);
 		Node deepest_node = get(word);
-		if (deepest_node.val == NULL_VAL)
+
+		if (deepest_node == null || deepest_node.val == NULL_VAL)
 			return 0;
 		else
 			return deepest_node.val;
